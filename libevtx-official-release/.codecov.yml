@@ -1,0 +1,31 @@
+coverage:
+  precision: 2
+  round: down
+  range: 70...100
+  status:
+    project: true
+    patch: true
+    changes: false
+  ignore:
+    - "libbfio/*"
+    - "libcdata/*"
+    - "libcdirectory/*"
+    - "libcerror/*"
+    - "libcfile/*"
+    - "libclocale/*"
+    - "libcnotify/*"
+    - "libcpath/*"
+    - "libcsplit/*"
+    - "libcthreads/*"
+    - "libexe/*"
+    - "libfcache/*"
+    - "libfdata/*"
+    - "libfdatetime/*"
+    - "libfguid/*"
+    - "libfvalue/*"
+    - "libfwevt/*"
+    - "libfwnt/*"
+    - "libregf/*"
+    - "libuna/*"
+    - "libwrc/*"
+    - "tests/*"
