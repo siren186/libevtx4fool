@@ -8,7 +8,7 @@ libevtx-msvc傻瓜编译包
 # 所使用到的库版本信息:
 |库|版本|链接|
 |--|--|--|
-|libevtx|20220724|[libevtx-alpha-20220724](https://github.com/libyal/libevtx/archive/refs/tags/20220724.zip)|
+|libevtx|libevtx@935e0a9|[935e0a9](https://github.com/libyal/libevtx/tree/935e0a9e855f443fe7b879eccc9ec83997453917)|
 
 
 # 编译前准备工作
