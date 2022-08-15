@@ -1396,7 +1396,7 @@ int libfwevt_xml_tag_get_attribute_by_utf8_name(
 			}
 			if( towupper( (wint_t) name_character ) != towupper( (wint_t) string_character ) )
 			{
-				break;
+				return( 0 );
 			}
 		}
 		if( ( name_index == value_entry_data_size )
@@ -1634,7 +1634,7 @@ int libfwevt_xml_tag_get_attribute_by_utf16_name(
 			}
 			if( towupper( (wint_t) name_character ) != towupper( (wint_t) string_character ) )
 			{
-				break;
+				return( 0 );
 			}
 		}
 		if( ( name_index == value_entry_data_size )
@@ -1957,7 +1957,7 @@ int libfwevt_xml_tag_get_element_by_utf8_name(
 			}
 			if( towupper( (wint_t) name_character ) != towupper( (wint_t) string_character ) )
 			{
-				break;
+				return( 0 );
 			}
 		}
 		if( ( name_index == value_entry_data_size )
@@ -2195,7 +2195,7 @@ int libfwevt_xml_tag_get_element_by_utf16_name(
 			}
 			if( towupper( (wint_t) name_character ) != towupper( (wint_t) string_character ) )
 			{
-				break;
+				return( 0 );
 			}
 		}
 		if( ( name_index == value_entry_data_size )

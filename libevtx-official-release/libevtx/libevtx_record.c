@@ -1890,3 +1890,512 @@ int libevtx_record_get_utf16_xml_string(
 	return( 1 );
 }
 
+
+/* Retrieves the event task
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_event_task(
+	libevtx_record_t *record, 
+	uint32_t *event_task, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_event_task";
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	if (libevtx_record_values_get_event_task(
+		internal_record->record_values,
+		event_task,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve event level from record values.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the size of the UTF-8 encoded address in <UserData> label
+* The returned size includes the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_utf8_address_size_in_userdata(
+	libevtx_record_t *record, 
+	size_t *utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_address_size_in_userdata";
+	int result = 0;
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+	
+	result = libevtx_record_values_get_utf8_address_size_in_userdata(
+		internal_record->record_values,
+		utf8_string_size,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of address.",
+			function);
+
+		return(-1);
+	}
+	return(result);
+}
+
+/* Retrieves the UTF-8 encoded address in <UserData> label
+* The size should include the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_utf8_address_in_userdata(
+	libevtx_record_t *record, 
+	uint8_t *utf8_string, 
+	size_t utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_address_in_userdata";
+	int result = 0;
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	result = libevtx_record_values_get_utf8_address_in_userdata(
+		internal_record->record_values,
+		utf8_string,
+		utf8_string_size,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy address to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+	return(result);
+}
+
+/* Retrieves the size of the UTF-8 encoded Port in <UserData> label
+* The returned size includes the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_utf8_port_size_in_userdata(
+	libevtx_record_t *record, 
+	size_t *utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_port_size_in_userdata";
+	int result = 0;
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	result = libevtx_record_values_get_utf8_port_size_in_userdata(
+		internal_record->record_values,
+		utf8_string_size,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of Port.",
+			function);
+
+		return(-1);
+	}
+	return(result);
+}
+
+/* Retrieves the UTF-8 encoded port in <UserData> label
+* The size should include the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_utf8_port_in_userdata(
+	libevtx_record_t *record, 
+	uint8_t *utf8_string, 
+	size_t utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_port_in_userdata";
+	int result = 0;
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	result = libevtx_record_values_get_utf8_port_in_userdata(
+		internal_record->record_values,
+		utf8_string,
+		utf8_string_size,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy port to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+	return(result);
+}
+
+/* Retrieves the size of the UTF-8 encoded user in <UserData> label
+* The returned size includes the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_utf8_user_size_in_userdata(
+	libevtx_record_t *record, 
+	size_t *utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_user_size_in_userdata";
+	int result = 0;
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	result = libevtx_record_values_get_utf8_user_size_in_userdata(
+		internal_record->record_values,
+		utf8_string_size,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of user in <UserData> label.",
+			function);
+
+		return(-1);
+	}
+	return(result);
+}
+
+/* Retrieves the UTF-8 encoded user in <UserData> label
+* The size should include the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_utf8_user_in_userdata(
+	libevtx_record_t *record, 
+	uint8_t *utf8_string, 
+	size_t utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_user_in_userdata";
+	int result = 0;
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	result = libevtx_record_values_get_utf8_user_in_userdata(
+		internal_record->record_values,
+		utf8_string,
+		utf8_string_size,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy address to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+	return(result);
+}
+
+/* Retrieves the size of the UTF-8 encoded element name in <UserData> label
+* The returned size includes the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_utf8_element_value_size_in_userdata(
+	libevtx_record_t *record, 
+	const uint8_t *utf8_element_name, 
+	size_t *utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_element_name_size_in_userdata";
+	int result = 0;
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	result = libevtx_record_values_get_utf8_element_value_size_in_userdata(
+		internal_record->record_values,
+		utf8_element_name,
+		utf8_string_size,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of user in <UserData> label.",
+			function);
+
+		return(-1);
+	}
+	return(result);
+}
+
+/* Retrieves the UTF-8 encoded user in <UserData> label
+* The size should include the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_get_utf8_element_value_in_userdata(
+	libevtx_record_t *record, 
+	const uint8_t *utf8_element_name, 
+	uint8_t *utf8_string, 
+	size_t utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_element_value_in_userdata";
+	int result = 0;
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	result = libevtx_record_values_get_utf8_element_value_in_userdata(
+		internal_record->record_values,
+		utf8_element_name,
+		utf8_string,
+		utf8_string_size,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy address to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+	return(result);
+}
+
+/* Retrieves a specific UTF-8 element string
+* The size should include the end of string character
+* Returns 1 if successful or -1 on error
+*/
+int libevtx_record_get_utf8_element_by_index(
+	libevtx_record_t *record, 
+	int element_index, 
+	uint8_t *utf8_element_buff,
+	size_t buff_size,
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_element_by_index";
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	if (libevtx_record_values_get_utf8_element_by_index(
+		internal_record->record_values,
+		internal_record->io_handle,
+		element_index,
+		utf8_element_buff,
+		buff_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to retrieve size of UTF-8 element: %d.",
+			function,
+			element_index);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves a specific UTF-8 name attribute of element string
+* The size should include the end of string character
+* Returns 1 if successful or -1 on error
+*/
+int libevtx_record_get_utf8_data_name_by_index(
+	libevtx_record_t *record, 
+	int element_index, 
+	uint8_t *utf8_attr_value_buff, 
+	size_t buff_size, 
+	libcerror_error_t **error)
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function = "libevtx_record_get_utf8_data_name_by_index";
+
+	if (record == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record.",
+			function);
+
+		return(-1);
+	}
+	internal_record = (libevtx_internal_record_t *)record;
+
+	if (libevtx_record_values_get_utf8_data_name_by_index(
+		internal_record->record_values,
+		internal_record->io_handle,
+		element_index,
+		utf8_attr_value_buff,
+		buff_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to retrieve size of UTF-8 attribute value: %d.",
+			function,
+			element_index);
+
+		return(-1);
+	}
+	return(1);
+}

@@ -5554,3 +5554,1598 @@ int libevtx_record_values_get_utf16_xml_string(
 	return( 1 );
 }
 
+
+/* Retrieves the event task
+* Returns 1 if successful or -1 on error
+*/
+int libevtx_record_values_get_event_task(
+	libevtx_record_values_t *record_values, 
+	uint32_t *event_task, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *task_xml_tag = NULL;
+	libfwevt_xml_tag_t *root_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag = NULL;
+	static char *function = "libevtx_record_values_get_event_task";
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->task_value == NULL)
+	{
+		if (libfwevt_xml_document_get_root_xml_tag(
+			record_values->xml_document,
+			&root_xml_tag,
+			error) != 1)
+		{
+			libcerror_error_set(
+				error,
+				LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				"%s: unable to retrieve root XML element.",
+				function);
+
+			return(-1);
+		}
+		if (libfwevt_xml_tag_get_element_by_utf8_name(
+			root_xml_tag,
+			(uint8_t *) "System",
+			6,
+			&system_xml_tag,
+			error) != 1)
+		{
+			libcerror_error_set(
+				error,
+				LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				"%s: unable to retrieve System XML element.",
+				function);
+
+			return(-1);
+		}
+		if (libfwevt_xml_tag_get_element_by_utf8_name(
+			system_xml_tag,
+			(uint8_t *) "Task",
+			4,
+			&task_xml_tag,
+			error) != 1)
+		{
+			libcerror_error_set(
+				error,
+				LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				"%s: unable to retrieve Level XML element.",
+				function);
+
+			return(-1);
+		}
+		if (libfwevt_xml_tag_get_value(
+			task_xml_tag,
+			&(record_values->task_value),
+			error) != 1)
+		{
+			libcerror_error_set(
+				error,
+				LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				"%s: unable to retrieve Level XML element value.",
+				function);
+
+			return(-1);
+		}
+	}
+	if (libfvalue_value_copy_to_32bit(
+		record_values->task_value,
+		0,
+		event_task,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy value to event level.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the size of the UTF-8 encoded address in <UserData> label
+* The returned size includes the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_values_get_utf8_address_size_in_userdata(
+	libevtx_record_values_t *record_values, 
+	size_t *utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *root_xml_tag		= NULL;
+	libfwevt_xml_tag_t *eventxml_xml_tag		= NULL;
+	libfwevt_xml_tag_t *userdata_xml_tag	= NULL;
+	libfwevt_xml_tag_t *address_xml_tag		= NULL;
+	libfvalue_value_t *address_value = NULL;
+	static char *function = "libevtx_record_values_get_utf8_address_size_in_userdata";
+	int result = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (libfwevt_xml_document_get_root_xml_tag(
+		record_values->xml_document,
+		&root_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve root XML element.",
+			function);
+
+		return(-1);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		root_xml_tag,
+		(uint8_t *) "UserData",
+		8,
+		&userdata_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UserData XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		userdata_xml_tag,
+		(uint8_t *) "EventXML",
+		8,
+		&eventxml_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve EventXML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		eventxml_xml_tag,
+		(uint8_t *) "Address",
+		7,
+		&address_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve Address XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		address_xml_tag,
+		&address_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve address XML element value.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_get_utf8_string_size(
+		address_value,
+		0,
+		utf8_string_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of address.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the UTF-8 encoded address in <UserData> label
+* The size should include the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_values_get_utf8_address_in_userdata(
+	libevtx_record_values_t *record_values, 
+	uint8_t *utf8_string, 
+	size_t utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *root_xml_tag = NULL;
+	libfwevt_xml_tag_t *eventxml_xml_tag = NULL;
+	libfwevt_xml_tag_t *userdata_xml_tag = NULL;
+	libfwevt_xml_tag_t *address_xml_tag = NULL;
+	libfvalue_value_t *address_value = NULL;
+	static char *function = "libevtx_record_values_get_utf8_address_in_userdata";
+	int result = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (libfwevt_xml_document_get_root_xml_tag(
+		record_values->xml_document,
+		&root_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve root XML element.",
+			function);
+
+		return(-1);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		root_xml_tag,
+		(uint8_t *) "UserData",
+		8,
+		&userdata_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UserData XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		userdata_xml_tag,
+		(uint8_t *) "EventXML",
+		8,
+		&eventxml_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve EventXML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		eventxml_xml_tag,
+		(uint8_t *) "Address",
+		7,
+		&address_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve Address XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		address_xml_tag,
+		&address_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve address XML element value.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_copy_to_utf8_string(
+		address_value,
+		0,
+		utf8_string,
+		utf8_string_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy address to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the size of the UTF-8 encoded Port in <UserData> label
+* The returned size includes the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_values_get_utf8_port_size_in_userdata(
+	libevtx_record_values_t *record_values, 
+	size_t *utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *root_xml_tag = NULL;
+	libfwevt_xml_tag_t *eventxml_xml_tag = NULL;
+	libfwevt_xml_tag_t *userdata_xml_tag = NULL;
+	libfwevt_xml_tag_t *port_xml_tag = NULL;
+	libfvalue_value_t *port_value = NULL;
+	static char *function = "libevtx_record_values_get_utf8_port_size_in_userdata";
+	int result = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (libfwevt_xml_document_get_root_xml_tag(
+		record_values->xml_document,
+		&root_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve root XML element.",
+			function);
+
+		return(-1);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		root_xml_tag,
+		(uint8_t *) "UserData",
+		8,
+		&userdata_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UserData XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		userdata_xml_tag,
+		(uint8_t *) "EventXML",
+		8,
+		&eventxml_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve EventXML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		eventxml_xml_tag,
+		(uint8_t *) "Port",
+		4,
+		&port_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve Port XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		port_xml_tag,
+		&port_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve port XML element value.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_get_utf8_string_size(
+		port_value,
+		0,
+		utf8_string_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of port.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the UTF-8 encoded port in <UserData> label
+* The size should include the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_values_get_utf8_port_in_userdata(
+	libevtx_record_values_t *record_values, 
+	uint8_t *utf8_string, 
+	size_t utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *root_xml_tag = NULL;
+	libfwevt_xml_tag_t *eventxml_xml_tag = NULL;
+	libfwevt_xml_tag_t *userdata_xml_tag = NULL;
+	libfwevt_xml_tag_t *port_xml_tag = NULL;
+	libfvalue_value_t *port_value = NULL;
+	static char *function = "libevtx_record_values_get_utf8_port_in_userdata";
+	int result = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (libfwevt_xml_document_get_root_xml_tag(
+		record_values->xml_document,
+		&root_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve root XML element.",
+			function);
+
+		return(-1);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		root_xml_tag,
+		(uint8_t *) "UserData",
+		8,
+		&userdata_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UserData XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		userdata_xml_tag,
+		(uint8_t *) "EventXML",
+		8,
+		&eventxml_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve EventXML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		eventxml_xml_tag,
+		(uint8_t *) "Port",
+		4,
+		&port_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve Port XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		port_xml_tag,
+		&port_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve port XML element value.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_copy_to_utf8_string(
+		port_value,
+		0,
+		utf8_string,
+		utf8_string_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy port to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the size of the UTF-8 encoded user in <UserData> label
+* The returned size includes the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_values_get_utf8_user_size_in_userdata(
+	libevtx_record_values_t *record_values, 
+	size_t *utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *root_xml_tag = NULL;
+	libfwevt_xml_tag_t *eventxml_xml_tag = NULL;
+	libfwevt_xml_tag_t *userdata_xml_tag = NULL;
+	libfwevt_xml_tag_t *user_xml_tag = NULL;
+	libfvalue_value_t *user_value = NULL;
+	static char *function = "libevtx_record_values_get_utf8_user_size_in_userdata";
+	int result = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (libfwevt_xml_document_get_root_xml_tag(
+		record_values->xml_document,
+		&root_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve root XML element.",
+			function);
+
+		return(-1);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		root_xml_tag,
+		(uint8_t *) "UserData",
+		8,
+		&userdata_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UserData XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		userdata_xml_tag,
+		(uint8_t *) "EventXML",
+		8,
+		&eventxml_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve EventXML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		eventxml_xml_tag,
+		(uint8_t *) "User",
+		4,
+		&user_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve User XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		user_xml_tag,
+		&user_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve user XML element value.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_get_utf8_string_size(
+		user_value,
+		0,
+		utf8_string_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of user.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the UTF-8 encoded user in <UserData> label
+* The size should include the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_values_get_utf8_user_in_userdata(
+	libevtx_record_values_t *record_values, 
+	uint8_t *utf8_string, 
+	size_t utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *root_xml_tag = NULL;
+	libfwevt_xml_tag_t *eventxml_xml_tag = NULL;
+	libfwevt_xml_tag_t *userdata_xml_tag = NULL;
+	libfwevt_xml_tag_t *user_xml_tag = NULL;
+	libfvalue_value_t *user_value = NULL;
+	static char *function = "libevtx_record_values_get_utf8_user_in_userdata";
+	int result = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (libfwevt_xml_document_get_root_xml_tag(
+		record_values->xml_document,
+		&root_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve root XML element.",
+			function);
+
+		return(-1);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		root_xml_tag,
+		(uint8_t *) "UserData",
+		8,
+		&userdata_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UserData XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		userdata_xml_tag,
+		(uint8_t *) "EventXML",
+		8,
+		&eventxml_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve EventXML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		eventxml_xml_tag,
+		(uint8_t *) "User",
+		4,
+		&user_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve User XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		user_xml_tag,
+		&user_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve user XML element value.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_copy_to_utf8_string(
+		user_value,
+		0,
+		utf8_string,
+		utf8_string_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy user to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the size of the UTF-8 encoded element name in <UserData> label
+* The returned size includes the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_values_get_utf8_element_value_size_in_userdata(
+	libevtx_record_values_t *record_values, 
+	const uint8_t *utf8_element_name, 
+	size_t *utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *root_xml_tag = NULL;
+	libfwevt_xml_tag_t *eventxml_xml_tag = NULL;
+	libfwevt_xml_tag_t *userdata_xml_tag = NULL;
+	libfwevt_xml_tag_t *element_xml_tag = NULL;
+	libfvalue_value_t *element_value = NULL;
+	static char *function = "libevtx_record_values_get_utf8_element_value_size_in_userdata";
+	int result = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (libfwevt_xml_document_get_root_xml_tag(
+		record_values->xml_document,
+		&root_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve root XML element.",
+			function);
+
+		return(-1);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		root_xml_tag,
+		(uint8_t *) "UserData",
+		8,
+		&userdata_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UserData XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		userdata_xml_tag,
+		(uint8_t *) "EventXML",
+		8,
+		&eventxml_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve EventXML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		eventxml_xml_tag,
+		utf8_element_name,
+		strlen((const char*)utf8_element_name),
+		&element_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve element XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		element_xml_tag,
+		&element_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve element XML element value.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_get_utf8_string_size(
+		element_value,
+		0,
+		utf8_string_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of element.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves the UTF-8 encoded user in <UserData> label
+* The size should include the end of string character
+* Returns 1 if successful, 0 if not available or -1 on error
+*/
+int libevtx_record_values_get_utf8_element_value_in_userdata(
+	libevtx_record_values_t *record_values, 
+	const uint8_t *utf8_element_name, 
+	uint8_t *utf8_string, 
+	size_t utf8_string_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *root_xml_tag = NULL;
+	libfwevt_xml_tag_t *eventxml_xml_tag = NULL;
+	libfwevt_xml_tag_t *userdata_xml_tag = NULL;
+	libfwevt_xml_tag_t *element_xml_tag = NULL;
+	libfvalue_value_t *element_value = NULL;
+	static char *function = "libevtx_record_values_get_utf8_element_value_in_userdata";
+	int result = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (libfwevt_xml_document_get_root_xml_tag(
+		record_values->xml_document,
+		&root_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve root XML element.",
+			function);
+
+		return(-1);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		root_xml_tag,
+		(uint8_t *) "UserData",
+		8,
+		&userdata_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UserData XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		userdata_xml_tag,
+		(uint8_t *) "EventXML",
+		8,
+		&eventxml_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve EventXML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	result = libfwevt_xml_tag_get_element_by_utf8_name(
+		eventxml_xml_tag,
+		utf8_element_name,
+		strlen((const char*)utf8_element_name),
+		&element_xml_tag,
+		error);
+
+	if (result == -1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve element XML element.",
+			function);
+
+		return(-1);
+	}
+	else if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		element_xml_tag,
+		&element_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve element XML element value.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_copy_to_utf8_string(
+		element_value,
+		0,
+		utf8_string,
+		utf8_string_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy element to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+	return(1);
+}
+
+/* Retrieves a specific UTF-8 element string
+* The size should include the end of string character
+* Returns 1 if successful or -1 on error
+*/
+int libevtx_record_values_get_utf8_element_by_index(
+	libevtx_record_values_t *record_values, 
+	libevtx_io_handle_t *io_handle, 
+	int element_index, 
+	uint8_t *utf8_element_buff,
+	size_t buff_size,
+	libcerror_error_t **error)
+{
+	libfwevt_internal_xml_tag_t *internal_xml_tag		= NULL;
+	libfwevt_xml_tag_t *element_xml_tag					= NULL;
+	uint8_t* value_entry_data							= NULL;
+	static char *function								= "libevtx_record_values_get_utf8_element_by_index";
+	size_t	value_entry_data_size						= 0;
+	int encoding										= 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->data_parsed == 0)
+	{
+		if (libevtx_record_values_parse_data(
+			record_values,
+			io_handle,
+			NULL,
+			error) != 1)
+		{
+			libcerror_error_set(
+				error,
+				LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				LIBCERROR_RUNTIME_ERROR_GENERIC,
+				"%s: unable to parse data.",
+				function);
+
+			return(-1);
+		}
+	}
+	if (libcdata_array_get_entry_by_index(
+		record_values->strings_array,
+		element_index,
+		(intptr_t **)&element_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve string: %d.",
+			function,
+			element_index);
+
+		return(-1);
+	}
+
+	internal_xml_tag = (libfwevt_internal_xml_tag_t *)element_xml_tag;
+
+	if (libfvalue_value_get_entry_data(
+		internal_xml_tag->name,
+		0,
+		&value_entry_data,
+		&value_entry_data_size,
+		&encoding,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve element name value type.",
+			function);
+
+		return(-1);
+	}
+
+	if (value_entry_data_size > buff_size)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: insufficient buffer size.",
+			function);
+
+		return(-1);
+	}
+
+	memcpy(utf8_element_buff, value_entry_data, value_entry_data_size);
+
+	return(1);
+}
+
+/* Retrieves a specific UTF-8 name attribute of element string
+* The size should include the end of string character
+* Returns 1 if successful or -1 on error
+*/
+int libevtx_record_values_get_utf8_data_name_by_index(
+	libevtx_record_values_t *record_values, 
+	libevtx_io_handle_t *io_handle, 
+	int element_index, 
+	uint8_t *utf8_attr_value_buff, 
+	size_t buff_size, 
+	libcerror_error_t **error)
+{
+	libfwevt_xml_tag_t *attr_value_xml_tag				= NULL;
+	libfwevt_xml_tag_t *attr_xml_tag					= NULL;
+	libfvalue_value_t *attr_name_value					= NULL;
+	static char *function								= "libevtx_record_values_get_utf8_data_name_by_index";
+	size_t utf8_attr_value_buff_size					= 0;
+    int result                                          = 0;
+
+	if (record_values == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			"%s: invalid record values.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->xml_document == NULL)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			"%s: invalid record values - missing XML document.",
+			function);
+
+		return(-1);
+	}
+	if (record_values->data_parsed == 0)
+	{
+		if (libevtx_record_values_parse_data(
+			record_values,
+			io_handle,
+			NULL,
+			error) != 1)
+		{
+			libcerror_error_set(
+				error,
+				LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				LIBCERROR_RUNTIME_ERROR_GENERIC,
+				"%s: unable to parse data.",
+				function);
+
+			return(-1);
+		}
+	}
+
+	if (libcdata_array_get_entry_by_index(
+		record_values->strings_array,
+		element_index,
+		(intptr_t **)&attr_xml_tag,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve string: %d.",
+			function,
+			element_index);
+
+		return(-1);
+	}
+
+	result = libfwevt_xml_tag_get_attribute_by_utf8_name(
+		attr_xml_tag,
+		(uint8_t *) "Name",
+		4,
+		&attr_value_xml_tag,
+		error);
+	if (result == 0)
+	{
+		return(0);
+	}
+	if (libfwevt_xml_tag_get_value(
+		attr_value_xml_tag,
+		&attr_name_value,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve provider name XML element value.",
+			function);
+
+		return(-1);
+	}
+
+	if (libfvalue_value_get_utf8_string_size(
+		attr_name_value,
+		0,
+		&utf8_attr_value_buff_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: unable to retrieve UTF-8 string size of provider name.",
+			function);
+
+		return(-1);
+	}
+	if (utf8_attr_value_buff_size > buff_size)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			"%s: insufficient buffer size.",
+			function);
+
+		return(-1);
+	}
+	if (libfvalue_value_copy_to_utf8_string(
+		attr_name_value,
+		0,
+		utf8_attr_value_buff,
+		utf8_attr_value_buff_size,
+		error) != 1)
+	{
+		libcerror_error_set(
+			error,
+			LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			"%s: unable to copy provider name to UTF-8 string.",
+			function);
+
+		return(-1);
+	}
+
+	return(1);
+}
